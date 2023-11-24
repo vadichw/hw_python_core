@@ -8,5 +8,5 @@ setup(
     author_email='vadik56780098@gmail.com',
     license='MIT',
     packages=find_namespace_packages(),
-    entry_points={'console_scripts': ['clean_folder = clean_folder.clean:sorting']}
+    entry_points={'console_scripts': ['clean_folder = clean_folder.clean:main']}
 )
