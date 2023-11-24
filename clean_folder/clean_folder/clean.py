@@ -81,5 +81,8 @@ def sorting(path):
             
             
 def main():
-    path = Path(sys.argv[1])
-    sorting(path)
+    if len(sys.argv) > 1:
+        path = Path(sys.argv[1])
+        sorting(path)
+    else:
+        print("Enter folder")
