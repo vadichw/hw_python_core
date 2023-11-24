@@ -80,5 +80,6 @@ def sorting(path):
             create_folder(item)
             
             
-path = Path(sys.argv[1])
-sorting(path)
+def main():
+    path = Path(sys.argv[1])
+    sorting(path)
