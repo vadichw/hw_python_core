@@ -1,4 +1,4 @@
-from datetime import datetime, timedelta
+from datetime import datetime
 from collections import UserDict
 
 
@@ -33,28 +33,10 @@ class Phone(Field):
             raise ValueError("Invalid phone number format")
 
 
-class Birthday(Field):
-    def validate(self, value):
-        try:
-            datetime.strptime(value, "%Y-%m-%d")
-        except ValueError:
-            raise ValueError("Invalid date format. Use YYYY-MM-DD.")
-
-    @property
-    def days_to_birthday(self):
-        if not self._value:
-            return None
-        today = datetime.now()
-        birthday = datetime.strptime(self._value, "%Y-%m-%d").replace(year=today.year)
-        if birthday < today:
-            birthday = birthday.replace(year=today.year + 1)
-        return (birthday - today).days
-
-
 class Record:
     def __init__(self, name, birthday=None):
         self.name = Name(name)
-        self.birthday = Birthday(birthday) if birthday else None
+        self.birthday = birthday
         self.phones = []
 
     def add_phone(self, phone):
@@ -75,6 +57,15 @@ class Record:
             if p.value == phone:
                 return p
         return None
+
+    def days_to_birthday(self):
+        if not self.birthday:
+            return None
+        today = datetime.now()
+        current_birthday = datetime(today.year, self.birthday.month, self.birthday.day)
+        if current_birthday < today:
+            current_birthday = current_birthday.replace(year=today.year + 1)
+        return (current_birthday - today).days
 
     def __str__(self):
         phones_str = '; '.join(str(phone) for phone in self.phones)
@@ -100,9 +91,9 @@ class AddressBook(UserDict):
 
 
 book = AddressBook()
-record1 = Record("Vadim", "2001-09-04")
+record1 = Record("Vadim", datetime.strptime("2001-09-04", "%Y-%m-%d"))
 record1.add_phone("1234567890")
-record2 = Record("Vika", "2002-05-14")
+record2 = Record("Vika", datetime.strptime("2002-05-14", "%Y-%m-%d"))
 record2.add_phone("0987654321")
 book.add_record(record1)
 book.add_record(record2)
@@ -110,5 +101,7 @@ book.add_record(record2)
 for batch in book.iterator(1):
     for record in batch:
         print(record)
-        if record.birthday:
-            print(f"Days to birthday: {record.birthday.days_to_birthday}")
+        print(f"Days to birthday: {record.days_to_birthday()}")
+
+
+
